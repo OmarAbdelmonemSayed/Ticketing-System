@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  AGENT
+  ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  PENDING
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketCategory {
+  BUG
+  FEATURE
+  BILLING
+  GENERAL
+  SUPPORT
+  ACCOUNT
+  PERFORMANCE
+  SECURITY
+}
+
+model User {
+  id              String       @id @default(uuid())
+  firstName       String       // min 3 max 20
+  lastName        String       // min 3 max 20
+  email           String       @unique   // valid email
+  password        String       // min 8 max 30
+  role            Role         @default(CUSTOMER)
+  createdTickets  Ticket[]     @relation("createdBy")
+  assignedTickets Ticket[]     @relation("assignedTo")
+  Comment         Comment[]
+  Attachment      Attachment[]
+}
+
+model Ticket {
+  id           String         @id @default(uuid())
+  title        String
+  description  String
+  status       TicketStatus   @default(OPEN)
+  priority     TicketPriority @default(LOW)
+  category     TicketCategory @default(GENERAL)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  customer     User           @relation("createdBy", fields: [customerId], references: [id])
+  agent        User?          @relation("assignedTo", fields: [agentId], references: [id])
+  department   Department?    @relation(fields: [departmentId], references: [id])
+  customerId   String
+  agentId      String?
+  departmentId String?
+  Comment      Comment[]
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   // min 3 max 20
+  description String
+  Ticket      Ticket[]
+}
+
+model Comment {
+  id         String       @id @default(uuid())
+  body       String
+  ticket     Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id])
+  ticketId   String
+  userId     String
+  Attachment Attachment[]
+}
+
+model Attachment {
+  id        String   @id @default(uuid())
+  fileUrl   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  commentId String
+}
