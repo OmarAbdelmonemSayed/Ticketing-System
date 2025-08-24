@@ -1,12 +1,19 @@
 import express, { Application } from "express";
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import cors from "cors";
+import { router as authRouter} from "./modules/auth/auth.routes";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
 
 const app: Application = express();
+dotenv.config();
 
-// Middlewares
+app.use(cors());
 app.use(express.json());
 
-// Routes
 
+
+app.use('/api/auth', authRouter);
+
+app.use(errorHandler)
 
 export default app;

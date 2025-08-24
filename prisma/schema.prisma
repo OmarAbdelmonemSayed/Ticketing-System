@@ -46,16 +46,17 @@ enum TicketCategory {
 }
 
 model User {
-  id              String       @id @default(uuid())
-  firstName       String       // min 3 max 20
-  lastName        String       // min 3 max 20
-  email           String       @unique   // valid email
-  password        String       // min 8 max 30
-  role            Role         @default(CUSTOMER)
-  createdTickets  Ticket[]     @relation("createdBy")
-  assignedTickets Ticket[]     @relation("assignedTo")
+  id              String           @id @default(uuid())
+  firstName       String
+  lastName        String
+  email           String           @unique
+  password        String
+  role            Role             @default(CUSTOMER)
+  createdTickets  Ticket[]         @relation("createdBy")
+  assignedTickets Ticket[]         @relation("assignedTo")
   Comment         Comment[]
   Attachment      Attachment[]
+  Refresh_Tokens  Refresh_Tokens[]
 }
 
 model Ticket {
@@ -78,7 +79,7 @@ model Ticket {
 
 model Department {
   id          String   @id @default(uuid())
-  name        String   // min 3 max 20
+  name        String
   description String
   Ticket      Ticket[]
 }
@@ -100,4 +101,13 @@ model Attachment {
   comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
   userId    String
   commentId String
+}
+
+model Refresh_Tokens {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userId    String
 }
