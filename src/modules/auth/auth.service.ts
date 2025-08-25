@@ -12,7 +12,10 @@ const prisma = new PrismaClient();
 const createUser = async (data: UserRegister) => {
     data.password = await hashPassword(data.password);
     const newUser = await prisma.user.create({
-        data
+        data: {
+            ...data,
+            role: 'CUSTOMER'
+        }
     });
     return newUser;
 }

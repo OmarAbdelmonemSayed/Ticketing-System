@@ -68,9 +68,9 @@ model Ticket {
   category     TicketCategory @default(GENERAL)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  customer     User           @relation("createdBy", fields: [customerId], references: [id])
-  agent        User?          @relation("assignedTo", fields: [agentId], references: [id])
-  department   Department?    @relation(fields: [departmentId], references: [id])
+  customer     User           @relation("createdBy", fields: [customerId], references: [id], onDelete: Cascade)
+  agent        User?          @relation("assignedTo", fields: [agentId], references: [id], onDelete: SetNull)
+  department   Department?    @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   customerId   String
   agentId      String?
   departmentId String?
@@ -88,7 +88,7 @@ model Comment {
   id         String       @id @default(uuid())
   body       String
   ticket     Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  user       User         @relation(fields: [userId], references: [id])
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   ticketId   String
   userId     String
   Attachment Attachment[]
@@ -105,7 +105,7 @@ model Attachment {
 
 model Refresh_Tokens {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   token     String
   expiresAt DateTime
   createdAt DateTime @default(now())

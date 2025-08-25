@@ -1,5 +1,6 @@
 import express from "express";
 import { userForgotPassword, userLogin, userLogout, userRefreshToken, userRegister, userResetPassword } from "./auth.controller";
+import { hasPermission, isAuthenticated } from "../../middlewares/auth.middleware";
 
 const router = express.Router();
 
