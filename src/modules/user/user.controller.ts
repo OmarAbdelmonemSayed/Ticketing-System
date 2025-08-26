@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import asyncWrapper from '../../utils/asyncWrapper';
 import { CustomError } from '../../utils/CustomError';
-import jwt from 'jsonwebtoken';
-import { createAccessTokenFromRefreshToken, createAccessandRefreshTokens, createResetToken, getPayload } from '../../utils/createTokens';
+import { getPayload } from '../../utils/createTokens';
 import { createUserSchema } from './dto/createUser.dto';
 import { createNewUser, deleteUserById, getAllUsers, getUserById, updateUserById } from './user.service';
 import { updateUserSchema } from './dto/updateUser.dto';

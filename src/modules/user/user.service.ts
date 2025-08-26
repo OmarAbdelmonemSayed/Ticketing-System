@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { CustomError } from '../../utils/CustomError';
 import { hashPassword } from '../../utils/hashPassword';
 import { CreateUserType } from './dto/createUser.dto';
+import { UpdateUserType } from './dto/updateUser.dto';
 
 const prisma = new PrismaClient();
 
@@ -21,6 +22,12 @@ const getAllUsers = async () => {
             lastName: true,
             email: true,
             role: true,
+            department: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
         }
     });
     return users;
@@ -36,7 +43,13 @@ const getUserById = async (id: any) => {
             firstName: true,
             lastName: true,
             email: true,
-            role: true
+            role: true,
+            department: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
         }
     })
     if (!user) {
@@ -46,7 +59,29 @@ const getUserById = async (id: any) => {
 }
 
 const updateUserById = async (id: any, data: any) => {
-    const user = prisma.user.update({
+    let user: any = await prisma.user.findFirst({
+        where: {
+            id
+        }
+    })
+    if (!user) {
+        throw new CustomError(400, "User not found");
+    }
+    console.log(data.departmentId, user.role);
+    if (user.role != 'AGENT' && data.departmentId) {
+        throw new CustomError(400, "Only Agents can be assigned to a department");
+    }
+    if (data.departmentId) {
+        const department = await prisma.department.findFirst({
+            where: {
+                id: data.departmentId
+            }
+        });
+        if (!department) {
+            throw new CustomError(404, "Department not found");
+        }
+    }
+    user = await prisma.user.update({
         where: {
             id
         },
@@ -56,16 +91,27 @@ const updateUserById = async (id: any, data: any) => {
             firstName: true,
             lastName: true,
             email: true,
-            role: true   
+            role: true,
+            department: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
         }
     });
-    if (!user) {
-        throw new CustomError(400, "User not found");
-    }
     return user;
 }
 
 const deleteUserById = async (id: any) => {
+    const user = await prisma.user.findFirst({
+        where: {
+            id
+        }
+    });
+    if (!user) {
+        throw new CustomError(404, 'User not found');
+    }
     await prisma.user.delete({
         where: {
             id

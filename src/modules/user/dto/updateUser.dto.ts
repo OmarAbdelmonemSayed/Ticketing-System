@@ -13,7 +13,8 @@ const updateUserSchema = z.object({
         .optional(),
 
     email: z.string().email({ message: "Invalid email address" }).optional(),
-    role: z.enum([Role.CUSTOMER, Role.AGENT, Role.ADMIN]).optional()
+    role: z.enum([Role.CUSTOMER, Role.AGENT, Role.ADMIN]).optional(),
+    departmentId: z.string().optional()
 }).strict()
 
 

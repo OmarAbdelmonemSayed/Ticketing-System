@@ -54,10 +54,12 @@ model User {
   role            Role             @default(CUSTOMER)
   createdTickets  Ticket[]         @relation("createdBy")
   assignedTickets Ticket[]         @relation("assignedTo")
+  department      Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   Comment         Comment[]
   Attachment      Attachment[]
   Refresh_Tokens  Refresh_Tokens[]
   Note            Note[]
+  departmentId    String?
 }
 
 model Ticket {
@@ -84,13 +86,14 @@ model Department {
   name        String
   description String
   Ticket      Ticket[]
+  User        User[]
 }
 
 model Comment {
   id         String       @id @default(uuid())
   body       String
   ticket     Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  user       User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   ticketId   String
   userId     String?
   createdAt  DateTime     @default(now())
@@ -98,9 +101,9 @@ model Comment {
 }
 
 model Attachment {
-  id        String   @id @default(uuid())
+  id        String  @id @default(uuid())
   fileUrl   String
-  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   userId    String?
   commentId String

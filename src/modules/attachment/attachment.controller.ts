@@ -11,7 +11,7 @@ const createAttachment = asyncWrapper(
         createAttachmentSchema.parse(req.body);
         const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
         const Attachment = await createNewAttachment(payload, req.params.id, req.body);
-        res.json({
+        res.status(201).json({
             success: true,
             data: {
                 Attachment

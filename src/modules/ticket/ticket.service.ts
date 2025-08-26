@@ -136,6 +136,14 @@ const updateTicketById = async (user: any, id: any, data: UpdateTicketType) => {
 }
 
 const deleteTicketById = async (id: any) => {
+    const ticket = await prisma.ticket.findFirst({
+        where: {
+            id
+        }
+    });
+    if (!ticket) {
+        throw new CustomError(404, 'Ticket not found');
+    }
     await prisma.ticket.delete({
         where: {
             id

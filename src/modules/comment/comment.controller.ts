@@ -10,7 +10,7 @@ const createComment = asyncWrapper(
         createCommentSchema.parse(req.body);
         const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
         const comment = await createNewComment(payload, req.params.id, req.body);
-        res.json({
+        res.status(201).json({
             success: true,
             data: {
                 comment
