@@ -2,7 +2,7 @@ import express from "express";
 import { hasPermission, isAuthenticated } from "./../../middlewares/auth.middleware";
 import { assignTicket, createTicket, deleteTicket, getAnalytics, getSummary, getTicket, getTickets, updateStatus, updateTicket } from "./ticket.controller";
 import { createComment, deleteComment, getComments, updateComment } from "./../comment/comment.controller";
-import { createAttachment, deleteAttachment, getAttachments } from "./../attachment/attachment.controller";
+import { createAttachment, deleteAttachment, getAttachments, updateAttachment } from "./../attachment/attachment.controller";
 import { createNote, deleteNote, getNotes, updateNote } from "./../note/note.controller";
 
 const router = express.Router();
@@ -61,12 +61,13 @@ router.route('/:id/notes')
     
 router.route('/:id/comments/:commentId')
     .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), updateComment)  
-    .delete(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), deleteComment);  
+    .delete(isAuthenticated, hasPermission('AGENT', 'ADMIN'), deleteComment);  
 
 
 
 router.route('/:id/attachments/:attachmentId')
-    .delete(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), deleteAttachment);  
+    .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), updateAttachment)
+    .delete(isAuthenticated, hasPermission('AGENT', 'ADMIN'), deleteAttachment);  
 
 
 

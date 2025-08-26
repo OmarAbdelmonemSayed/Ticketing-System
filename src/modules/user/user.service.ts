@@ -69,7 +69,7 @@ const updateUserById = async (id: any, data: any) => {
     }
     console.log(data.departmentId, user.role);
     if (user.role != 'AGENT' && data.departmentId) {
-        throw new CustomError(400, "Only Agents can be assigned to a department");
+        throw new CustomError(401, "Only Agents can be assigned to a department");
     }
     if (data.departmentId) {
         const department = await prisma.department.findFirst({

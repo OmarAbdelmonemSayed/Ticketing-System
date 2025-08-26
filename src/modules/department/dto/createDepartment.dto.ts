@@ -9,9 +9,9 @@ const createDepartmentSchema = z.object({
 }).strict()
 
 
-type createDepartmentType = z.infer<typeof createDepartmentSchema>
+type CreateDepartmentType = z.infer<typeof createDepartmentSchema>
 
 export {
     createDepartmentSchema,
-    createDepartmentType
+    CreateDepartmentType
 }

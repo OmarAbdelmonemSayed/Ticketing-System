@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { CustomError } from '../../utils/CustomError';
 import { hashPassword } from '../../utils/hashPassword';
-import { createDepartmentType } from './dto/createDepartment.dto';
-import { updateDepartmentType } from './dto/updateDepartment.dto';
+import { CreateDepartmentType } from './dto/createDepartment.dto';
+import { UpdateDepartmentType } from './dto/updateDepartment.dto';
 
 const prisma = new PrismaClient();
 
-const createNewDepartment = async (data: createDepartmentType) => {
+const createNewDepartment = async (data: CreateDepartmentType) => {
     const department = await prisma.department.create({
         data
     });
@@ -48,7 +48,7 @@ const getDepartmentById = async (id: any) => {
     return department;
 }
 
-const updateDepartmentById = async (id: any, data: updateDepartmentType) => {
+const updateDepartmentById = async (id: any, data: UpdateDepartmentType) => {
     const department = await prisma.department.update({
         where: {
             id

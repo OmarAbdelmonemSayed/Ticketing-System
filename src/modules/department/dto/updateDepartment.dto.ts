@@ -10,9 +10,9 @@ const updateDepartmentSchema = z.object({
 }).strict()
 
 
-type updateDepartmentType = z.infer<typeof updateDepartmentSchema>
+type UpdateDepartmentType = z.infer<typeof updateDepartmentSchema>
 
 export {
     updateDepartmentSchema,
-    updateDepartmentType
+    UpdateDepartmentType
 }

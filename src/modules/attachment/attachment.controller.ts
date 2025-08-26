@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import asyncWrapper from './../../utils/asyncWrapper';
 import { getPayload } from './../../utils/createTokens';
-import { createNewAttachment, deleteAttachmentById, getAllAttachments } from './attachment.service';
+import { createNewAttachment, deleteAttachmentById, getAllAttachments, updateAttachmentById } from './attachment.service';
 import { createAttachmentSchema } from '../attachment/dto/createAttachment.dto';
+import { updateAttachmentSchema } from './dto/updateAttachment.dto';
 
 
 
@@ -34,6 +35,19 @@ const getAttachments = asyncWrapper(
         });
     })
 
+const updateAttachment = asyncWrapper(
+    async (req: Request, res: Response) => {
+        updateAttachmentSchema.parse(req.body);
+        const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
+        const attachment = await updateAttachmentById(payload, req.params.attachmentId, req.body);
+        res.json({
+            success: true,
+            data: {
+                attachment
+            },
+            message: "Attachment updated successfully"
+        });
+    })
 
 const deleteAttachment = asyncWrapper(
     async (req: Request, res: Response) => {
@@ -51,5 +65,6 @@ const deleteAttachment = asyncWrapper(
 export {
     createAttachment,
     getAttachments,
+    updateAttachment,
     deleteAttachment 
 }
