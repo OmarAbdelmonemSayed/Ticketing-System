@@ -17,7 +17,7 @@ const updateMyProfileSchema = z.object({
         .min(8, { message: "Password must be at least 8 characters" })
         .max(30, { message: "Password must be less than 30 characters" })
         .optional()
-})
+}).strict()
 
 
 type UpdateMyProfileType = z.infer<typeof updateMyProfileSchema>

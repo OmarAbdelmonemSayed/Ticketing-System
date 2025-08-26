@@ -17,7 +17,7 @@ const createUserSchema = z.object({
         .max(30, { message: "Password must be less than 30 characters" }),
 
     role: z.enum([Role.CUSTOMER, Role.AGENT, Role.ADMIN])
-})
+}).strict()
 
 
 type CreateUserType = z.infer<typeof createUserSchema>

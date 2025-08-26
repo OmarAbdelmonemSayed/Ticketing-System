@@ -57,24 +57,26 @@ model User {
   Comment         Comment[]
   Attachment      Attachment[]
   Refresh_Tokens  Refresh_Tokens[]
+  Note            Note[]
 }
 
 model Ticket {
-  id           String         @id @default(uuid())
+  id           String          @id @default(uuid())
   title        String
   description  String
-  status       TicketStatus   @default(OPEN)
-  priority     TicketPriority @default(LOW)
-  category     TicketCategory @default(GENERAL)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  customer     User           @relation("createdBy", fields: [customerId], references: [id], onDelete: Cascade)
-  agent        User?          @relation("assignedTo", fields: [agentId], references: [id], onDelete: SetNull)
-  department   Department?    @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  status       TicketStatus?   @default(OPEN)
+  priority     TicketPriority? @default(LOW)
+  category     TicketCategory? @default(GENERAL)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  customer     User            @relation("createdBy", fields: [customerId], references: [id], onDelete: Cascade)
+  agent        User?           @relation("assignedTo", fields: [agentId], references: [id], onDelete: SetNull)
+  department   Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   customerId   String
   agentId      String?
   departmentId String?
   Comment      Comment[]
+  Note         Note[]
 }
 
 model Department {
@@ -88,18 +90,19 @@ model Comment {
   id         String       @id @default(uuid())
   body       String
   ticket     Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
   ticketId   String
-  userId     String
+  userId     String?
+  createdAt  DateTime     @default(now())
   Attachment Attachment[]
 }
 
 model Attachment {
   id        String   @id @default(uuid())
   fileUrl   String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  userId    String
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String?
   commentId String
 }
 
@@ -110,4 +113,14 @@ model Refresh_Tokens {
   expiresAt DateTime
   createdAt DateTime @default(now())
   userId    String
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  body      String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  ticketId  String
+  userId    String?
 }

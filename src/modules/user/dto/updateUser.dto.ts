@@ -14,7 +14,7 @@ const updateUserSchema = z.object({
 
     email: z.string().email({ message: "Invalid email address" }).optional(),
     role: z.enum([Role.CUSTOMER, Role.AGENT, Role.ADMIN]).optional()
-})
+}).strict()
 
 
 type UpdateUserType = z.infer<typeof updateUserSchema>
