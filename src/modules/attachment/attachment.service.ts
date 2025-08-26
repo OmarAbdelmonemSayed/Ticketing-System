@@ -1,4 +1,4 @@
-import { CustomError } from "../../../utils/CustomError";
+import { CustomError } from "./../../utils/CustomError";
 import { PrismaClient } from "@prisma/client";
 import { CreateAttachmentType } from "../attachment/dto/createAttachment.dto";
 

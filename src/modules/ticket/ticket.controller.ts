@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import asyncWrapper from '../../../utils/asyncWrapper';
-import { getPayload } from '../../../utils/createTokens';
+import asyncWrapper from './../../utils/asyncWrapper';
+import { getPayload } from './../../utils/createTokens';
 import { createTicketSchema } from './dto/createTicket.dto';
 import { assignTicketToAgent, createNewTicket, deleteTicketById, getAllTickets, getTicketById, updateTicketById } from './ticket.service';
-import { AuthRequest } from '../../../utils/authReqest';
+import { AuthRequest } from './../../utils/authReqest';
 import { updateTicketSchema } from './dto/updateTicket.dto';
 import { updateStatusSchema } from './dto/updateStatus.dto';
 import { updateStatusById } from './ticket.service';

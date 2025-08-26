@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import asyncWrapper from '../../../utils/asyncWrapper';
-import { getPayload } from '../../../utils/createTokens';
+import asyncWrapper from './../../utils/asyncWrapper';
+import { getPayload } from './../../utils/createTokens';
 import { createNewComment, deleteCommentById, getAllComments, updateCommentById } from './comment.service';
 import { createCommentSchema } from '../comment/dto/createComment.dto';
 import { updateCommentSchema } from './dto/updateComment.dto';

@@ -1,4 +1,4 @@
-import { CustomError } from "../../../utils/CustomError";
+import { CustomError } from "./../../utils/CustomError";
 import { PrismaClient } from "@prisma/client";
 import { CreateCommentType } from "../comment/dto/createComment.dto";
 import { UpdateCommentType } from "./dto/updateComment.dto";

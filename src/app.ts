@@ -3,9 +3,8 @@ import dotenv from 'dotenv';
 import cors from "cors";
 import { router as authRouter} from "./modules/auth/auth.routes";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
-import { hasPermission, isAuthenticated } from "./middlewares/auth.middleware";
 import { router as userRouter } from './modules/user/user.routes'; 
-import {router as ticketRouter } from './modules/ticket/ticket/ticket.routes';
+import {router as ticketRouter } from './modules/ticket/ticket.routes';
 
 const app: Application = express();
 dotenv.config();

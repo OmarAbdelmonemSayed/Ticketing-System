@@ -1,10 +1,9 @@
-import { CustomError } from "../../../utils/CustomError";
+import { CustomError } from "./../../utils/CustomError";
 import { CreateTicketType } from "./dto/createTicket.dto"
 import { PrismaClient } from "@prisma/client";
 import { UpdateTicketType } from "./dto/updateTicket.dto";
 import { UpdateStatusType } from "./dto/updateStatus.dto";
 import { CreateAttachmentType } from "../attachment/dto/createAttachment.dto";
-import { assignTicketType } from "./dto/assignTicket.dto";
 
 const prisma = new PrismaClient();
 

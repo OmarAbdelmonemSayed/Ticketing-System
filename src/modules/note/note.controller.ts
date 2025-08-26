@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import asyncWrapper from '../../../utils/asyncWrapper';
+import asyncWrapper from './../../utils/asyncWrapper';
 import { createNoteSchema } from './dto/createNote.dto';
-import { getPayload } from '../../../utils/createTokens';
+import { getPayload } from './../../utils/createTokens';
 import { createNewNote, deleteNoteById, getAllNotes, updateNoteById } from './note.service';
 import { updateNoteSchema } from './dto/updateNote.dto';
 

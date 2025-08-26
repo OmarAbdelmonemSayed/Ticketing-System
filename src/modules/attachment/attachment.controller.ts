@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import asyncWrapper from '../../../utils/asyncWrapper';
-import { getPayload } from '../../../utils/createTokens';
+import asyncWrapper from './../../utils/asyncWrapper';
+import { getPayload } from './../../utils/createTokens';
 import { createNewAttachment, deleteAttachmentById, getAllAttachments } from './attachment.service';
 import { createAttachmentSchema } from '../attachment/dto/createAttachment.dto';
 
