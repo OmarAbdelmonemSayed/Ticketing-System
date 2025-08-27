@@ -8,6 +8,7 @@ import { updateTicketSchema } from './dto/updateTicket.dto';
 import { updateStatusSchema } from './dto/updateStatus.dto';
 import { updateStatusById } from './ticket.service';
 import { assignTicketSchema } from './dto/assignTicket.dto';
+import { cacheTicketById, cacheTickets } from '../../services/cache.service';
 
 
 
@@ -31,6 +32,7 @@ const getTickets = asyncWrapper(
     async (req: AuthRequest, res: Response) => {
         const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
         const tickets = await getAllTickets(payload);
+        await cacheTickets(payload, tickets);
         res.json({
             success: true,
             data: {
@@ -46,6 +48,7 @@ const getTicket = asyncWrapper(
     async (req: Request, res: Response) => {
         const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
         const ticket = await getTicketById(payload, req.params.id);
+        await cacheTicketById(ticket);
         res.json({
             success: true,
             data: {

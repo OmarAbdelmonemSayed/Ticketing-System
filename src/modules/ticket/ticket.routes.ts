@@ -4,42 +4,43 @@ import { assignTicket, createTicket, deleteTicket, getAnalytics, getSummary, get
 import { createComment, deleteComment, getComments, updateComment } from "./../comment/comment.controller";
 import { createAttachment, deleteAttachment, getAttachments, updateAttachment } from "./../attachment/attachment.controller";
 import { createNote, deleteNote, getNotes, updateNote } from "./../note/note.controller";
+import { cachedTickets, invalidateTicketsOnAssignAgentToTicket, invalidateTicketsOnCreateTicket, invalidateTicketsOnChangeTicket, cachedTicketById, invalidateTicketByIdOnChange } from "../../middlewares/cache.middleware";
 
 const router = express.Router();
 
 
 router.route('/')
-    .post(isAuthenticated, hasPermission('CUSTOMER'), createTicket)  
-    .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), getTickets);  
+    .post(isAuthenticated, hasPermission('CUSTOMER'), invalidateTicketsOnCreateTicket, createTicket)  
+    .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), cachedTickets, getTickets);  
 
 
 
 router.route('/:id')
-    .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), getTicket)  
-    .patch(isAuthenticated, hasPermission('CUSTOMER', 'ADMIN'), updateTicket)  
-    .delete(isAuthenticated, hasPermission('ADMIN'), deleteTicket);  
+    .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), cachedTicketById, getTicket)  
+    .patch(isAuthenticated, hasPermission('CUSTOMER', 'ADMIN'), invalidateTicketsOnChangeTicket, updateTicket)  
+    .delete(isAuthenticated, hasPermission('ADMIN'), invalidateTicketsOnChangeTicket, deleteTicket);  
 
 
 
 router.route('/:id/status')
-    .patch(isAuthenticated, hasPermission('AGENT', 'ADMIN'), updateStatus);  
+    .patch(isAuthenticated, hasPermission('AGENT', 'ADMIN'), invalidateTicketsOnChangeTicket, updateStatus);  
 
 
 
 router.route('/:id/comments')
-    .post(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), createComment)  
+    .post(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, createComment)  
     .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), getComments);  
 
 
 
 router.route('/:id/attachments')
-    .post(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), createAttachment)  
+    .post(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, createAttachment)  
     .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), getAttachments);  
 
 
 
 router.route('/:id/assign')
-    .patch(isAuthenticated, hasPermission('ADMIN'), assignTicket);  
+    .patch(isAuthenticated, hasPermission('ADMIN'), invalidateTicketsOnAssignAgentToTicket, assignTicket);  
 
 
 
@@ -60,14 +61,14 @@ router.route('/:id/notes')
 
     
 router.route('/:id/comments/:commentId')
-    .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), updateComment)  
-    .delete(isAuthenticated, hasPermission('AGENT', 'ADMIN'), deleteComment);  
+    .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, updateComment)  
+    .delete(isAuthenticated, hasPermission('AGENT', 'ADMIN'), invalidateTicketByIdOnChange, deleteComment);  
 
 
 
 router.route('/:id/attachments/:attachmentId')
-    .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), updateAttachment)
-    .delete(isAuthenticated, hasPermission('AGENT', 'ADMIN'), deleteAttachment);  
+    .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, updateAttachment)
+    .delete(isAuthenticated, hasPermission('AGENT', 'ADMIN'), invalidateTicketByIdOnChange, deleteAttachment);  
 
 
 

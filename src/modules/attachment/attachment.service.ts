@@ -11,6 +11,9 @@ const createNewAttachment = async (user: any, id: any, data: CreateAttachmentTyp
             id: data.commentId
         }
     });
+    if (!comment) {
+        throw new CustomError(404, 'Comment not found');
+    }
     if (user.id != comment?.userId) {
         throw new CustomError(401, 'Comment is not available for this user');
     }

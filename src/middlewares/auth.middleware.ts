@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import asyncWrapper from '../utils/asyncWrapper';
 import { Request, Response, NextFunction } from 'express';
 import { CustomError } from '../utils/CustomError';
