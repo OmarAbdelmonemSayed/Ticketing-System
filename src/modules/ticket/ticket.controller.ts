@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import asyncWrapper from './../../utils/asyncWrapper';
 import { getPayload } from './../../utils/createTokens';
 import { createTicketSchema } from './dto/createTicket.dto';
-import { assignTicketToAgent, createNewTicket, deleteTicketById, getAllTickets, getTicketById, updateTicketById } from './ticket.service';
+import { assignTicketToAgent, createNewTicket, deleteTicketById, getAllFilteredTickets, getAllTickets, getTicketById, updateTicketById } from './ticket.service';
 import { AuthRequest } from './../../utils/authReqest';
 import { updateTicketSchema } from './dto/updateTicket.dto';
 import { updateStatusSchema } from './dto/updateStatus.dto';
@@ -42,6 +42,19 @@ const getTickets = asyncWrapper(
         });
     })
 
+
+const getFilteredTickets = asyncWrapper(
+    async (req: AuthRequest, res: Response) => {
+        const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
+        const tickets = await getAllFilteredTickets(payload, req.query);
+        res.json({
+            success: true,
+            data: {
+                tickets
+            },
+            message: "Tickets fetched successfully"
+        });
+    })    
 
 
 const getTicket = asyncWrapper(
@@ -138,5 +151,6 @@ export {
     updateStatus,
     assignTicket,
     getAnalytics,
-    getSummary
+    getSummary,
+    getFilteredTickets
 }

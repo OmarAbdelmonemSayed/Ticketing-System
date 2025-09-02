@@ -37,6 +37,56 @@ const getAllTickets = async (data: any) => {
     return tickets;
 }
 
+const getAllFilteredTickets = async (data: any, query: any) => {
+    let tickets;
+    const filters = {};
+    if (query.status) {
+        (filters as any).status = query.status;
+    }
+    if (query.priority) {
+        (filters as any).priority = query.priority;
+    }
+    if (query.department) {
+        (filters as any).department = query.department;
+    }
+    let limit = 20;
+    let skip = 0;
+    if (query.limit) {
+        limit = parseInt(query.limit);
+    }
+    if (query.skip) {
+        skip = parseInt(query.skip);
+    }
+    if (data.role === 'CUSTOMER') {
+        tickets = await prisma.ticket.findMany({
+            where: {
+                customerId:data.id,
+                ...filters
+            },
+            take: limit,
+            skip
+        });
+    } else if (data.role === 'AGENT') {
+        tickets = await prisma.ticket.findMany({
+            where: {
+                agentId: data.id,
+                ...filters
+            },
+            take: limit,
+            skip
+        });
+    } else {
+        tickets = await prisma.ticket.findMany({
+            where: {
+                ...filters
+            },
+            take: limit,
+            skip
+        });
+    }
+    return tickets;
+}
+
 const getTicketById = async (user: any, id: any) => {
     let ticket;
     if (user.role === 'CUSTOMER') {
@@ -214,5 +264,6 @@ export {
     updateTicketById,
     deleteTicketById,
     updateStatusById,
-    assignTicketToAgent
+    assignTicketToAgent,
+    getAllFilteredTickets
 }

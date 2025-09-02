@@ -3,6 +3,7 @@ import { createClient } from 'redis';
 const client = createClient();
 
 const CACHE_EXPIRE = 1800;
+const CACHE_SIZE = 50;
 
 const getCachedTickets = async (user: any) => {
     if (user.role === 'CUTOMER' || user.role === 'AGENT') {
@@ -14,7 +15,6 @@ const getCachedTickets = async (user: any) => {
         return JSON.parse(tickets as string);
     }
 }
-
 
 const cacheTickets = async (user: any, tickets: any) => {
     if (user.role === 'CUTOMER' || user.role === 'AGENT') {
@@ -41,7 +41,7 @@ const getCachedTicketById = async (ticketId: any) => {
 
 const cacheTicketById = async (ticket: any) => {
     const sz = await client.LLEN('tickets');
-    if (sz == 50) {
+    if (sz === CACHE_SIZE) {
         const ticketId  = await client.LIndex('tickets', 49);
         await client.RPOP('tickets');
         await client.LPUSH('tickets', ticket.id);

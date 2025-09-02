@@ -1,6 +1,6 @@
 import express from "express";
 import { hasPermission, isAuthenticated } from "./../../middlewares/auth.middleware";
-import { assignTicket, createTicket, deleteTicket, getAnalytics, getSummary, getTicket, getTickets, updateStatus, updateTicket } from "./ticket.controller";
+import { assignTicket, createTicket, deleteTicket, getAnalytics, getFilteredTickets, getSummary, getTicket, getTickets, updateStatus, updateTicket } from "./ticket.controller";
 import { createComment, deleteComment, getComments, updateComment } from "./../comment/comment.controller";
 import { createAttachment, deleteAttachment, getAttachments, updateAttachment } from "./../attachment/attachment.controller";
 import { createNote, deleteNote, getNotes, updateNote } from "./../note/note.controller";
@@ -13,6 +13,9 @@ router.route('/')
     .post(isAuthenticated, hasPermission('CUSTOMER'), invalidateTicketsOnCreateTicket, createTicket)  
     .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), cachedTickets, getTickets);  
 
+
+router.route('/filters')
+    .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), getFilteredTickets);
 
 
 router.route('/:id')
