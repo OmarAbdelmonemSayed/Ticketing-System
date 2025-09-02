@@ -10,6 +10,7 @@ import { checkRefreshToken, createUser, findUserByEmail, findUserByEmailandPassw
 import { CustomError } from '../../utils/CustomError';
 import { createAccessTokenFromRefreshToken, createAccessandRefreshTokens, createResetToken, getPayload } from '../../utils/createTokens';
 import { sendMail } from '../../services/notification.service';
+import { addEmailJob } from '../../services/queue.service';
 
 
 
@@ -85,7 +86,7 @@ const userForgotPassword = asyncWrapper(
         forgetPasswordSchema.parse(req.body);
         const user = await findUserByEmail(req.body.email);
         const resetToken = await createResetToken(user);
-        await sendMail(user, resetToken);
+        await addEmailJob(user.email, 'Password Reset Request', `Hi ${user.firstName},\n\nUse the following token to reset your password. It expires in 1 hour:\n\n${resetToken}\n\nIf you didn't request this, ignore this email.`)
         res.json({
             success: true,
             data: null,

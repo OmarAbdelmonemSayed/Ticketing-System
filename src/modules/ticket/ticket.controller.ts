@@ -9,6 +9,8 @@ import { updateStatusSchema } from './dto/updateStatus.dto';
 import { updateStatusById } from './ticket.service';
 import { assignTicketSchema } from './dto/assignTicket.dto';
 import { cacheTicketById, cacheTickets } from '../../services/cache.service';
+import { addEmailJob } from '../../services/queue.service';
+import { getUserById } from '../user/user.service';
 
 
 
@@ -17,6 +19,8 @@ const createTicket = asyncWrapper(
         createTicketSchema.parse(req.body);
         const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
         const ticket = await createNewTicket(req.body, payload.id);
+        const customer = await getUserById(ticket.customerId);
+        await addEmailJob(payload.email, 'Ticket Created', `Hi ${customer.firstName},\n\n\nYour ticket has been created. Our team will contact you soon.\n\n\nThanks,\nSupport Team`);
         res.status(201).json({
             success: true,
             data: {
@@ -77,6 +81,12 @@ const updateTicket = asyncWrapper(
         updateTicketSchema.parse(req.body);
         const payload = await getPayload(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET as string);
         const ticket = await updateTicketById(payload, req.params.id, req.body);
+        const customer = await getUserById(ticket.customerId);
+        await addEmailJob(customer.email, 'Your Ticket Has Been Updated', `Hi ${customer.firstName},\n\n\nYour support ticket (#${ticket.id}) has been updated. Please check the latest details in your account.\n\n\nThanks,\nSupport Team`);
+        if (ticket.agentId) {
+            const agent = await getUserById(ticket.agentId);
+            await addEmailJob(agent.email, 'Assigned Ticket Updated', `Hi ${agent.firstName},\n\n\nThe ticket (#${ticket.id}) assigned to you has been updated. Please review the changes in the system.\n\n\nThanks,\nAdmin Team`);
+        }
         res.json({
             success: true,
             data: {
@@ -120,6 +130,8 @@ const assignTicket = asyncWrapper(
     async (req: Request, res: Response) => {
         assignTicketSchema.parse(req.body);
         const ticket = await assignTicketToAgent(req.body.agentId, req.params.id);
+        const agent = await getUserById(ticket.agentId);
+        await addEmailJob(agent.email, 'New Ticket Assigned', `Hi ${agent.firstName},\n\n\nA new ticket has been assigned to you. Please check the ticket details in the system.\n\n\nThanks,\nAdmin Team`);
         res.json({
             success: true,
             data: {

@@ -11,20 +11,13 @@ const transporter = nodemailer.createTransport({
 });
 
 
-const sendMail = async (user: any, resetToken: any) => {
+const sendMail = async (email: string, subject: string, body: string) => {
     try {
         const info = await transporter.sendMail({
             from: process.env.ACCOUNT_EMAIL,
-            to: user.email,
-            subject: "Password Reset Request",
-            text: `Hello ${user.firstName},\n\nUse the following token to reset your password. It expires in 1 hour:\n\n${resetToken}\n\nIf you didn't request this, ignore this email.`,
-
-            html: `
-                <p>Hello ${user.firstName},</p>
-                <p>Use the following token to reset your password. It expires in <b>1 hour</b>:</p>
-                <p><b>${resetToken}</b></p>
-                <p>If you didn't request this, ignore this email.</p>
-                `
+            to: email,
+            subject,
+            text: body
         });
         console.log("Message sent:", info.messageId);
     } catch (err) {
