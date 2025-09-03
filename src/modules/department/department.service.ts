@@ -18,6 +18,16 @@ const getAllDepartments = async () => {
     return departments;
 }
 
+const getAllDepartmentsNames = async () => {
+    const departments = await prisma.department.findMany({
+        select: {
+            name: true,
+            description: true
+        }
+    });
+    return departments;
+}
+
 const getDepartmentById = async (id: any) => {
     const department = await prisma.department.findFirst({
         where: {
@@ -77,10 +87,39 @@ const deleteDepartmentById = async (id: any) => {
     });
 }
 
+const getAllUsersInDepartment = async (departmentName: any) => {
+    const users = await prisma.department.findFirst({
+        where: {
+            name: departmentName
+        },
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            User: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    assignedTickets: {
+                        select: {
+                            id: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+    return users;
+}
+
 export {
     createNewDepartment,
     getAllDepartments,
     getDepartmentById,
     updateDepartmentById,
-    deleteDepartmentById
+    deleteDepartmentById,
+    getAllDepartmentsNames,
+    getAllUsersInDepartment
 }

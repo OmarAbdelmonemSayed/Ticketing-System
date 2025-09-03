@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { UpdateTicketType } from "./dto/updateTicket.dto";
 import { UpdateStatusType } from "./dto/updateStatus.dto";
 import { CreateAttachmentType } from "../attachment/dto/createAttachment.dto";
+import { getAllDepartmentsNames } from "../department/department.service";
 
 const prisma = new PrismaClient();
 
@@ -161,7 +162,7 @@ const getTicketById = async (user: any, id: any) => {
     return ticket;
 }
 
-const updateTicketById = async (user: any, id: any, data: UpdateTicketType) => {
+const updateTicketById = async (user: any, id: any, data: any) => {
     let ticket;
     if (user.role === 'CUSTOMER') {
         ticket = await prisma.ticket.update({
@@ -239,6 +240,9 @@ const assignTicketToAgent = async (agentId: any, id: any) => {
             id: agentId
         }
     });
+    if (!agent) {
+        throw new CustomError(404, 'User not found');
+    }
     if (agent?.role != 'AGENT') {
         throw new CustomError(400, 'User is not Agent');
     }
@@ -247,7 +251,8 @@ const assignTicketToAgent = async (agentId: any, id: any) => {
             id
         },
         data: {
-            agentId
+            agentId,
+            departmentId: agent.departmentId
         }
     });
     if (!ticket) {

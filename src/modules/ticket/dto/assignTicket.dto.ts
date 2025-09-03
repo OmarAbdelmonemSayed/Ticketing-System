@@ -1,7 +1,7 @@
 import {z} from 'zod';
 
 const assignTicketSchema = z.object({
-    agentId: z.string()
+    agentId: z.string().optional()
 }).strict()
 
 
