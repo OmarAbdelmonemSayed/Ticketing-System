@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { CustomError } from '../../utils/CustomError';
-import { hashPassword } from '../../utils/hashPassword';
 import { CreateDepartmentType } from './dto/createDepartment.dto';
 import { UpdateDepartmentType } from './dto/updateDepartment.dto';
+import { getAllTickets } from '../ticket/ticket.service';
 
 const prisma = new PrismaClient();
 
@@ -114,6 +114,50 @@ const getAllUsersInDepartment = async (departmentName: any) => {
     return users;
 }
 
+const getDepartmentsAnalytics = async () => {
+    const data = await prisma.department.findMany({
+        select: {
+            id: true,
+            name: true,
+            User: {
+                select: {
+                    id: true
+                }
+            },
+            Ticket: {
+                select: {
+                    priority: true
+                }
+            }
+        }
+    });
+    let report: any[] = [];
+    let ticketsAssignedToDepartment = 0;
+    for (let i = 0; i < data.length; i++) {
+        let reportElement: any = {};
+        reportElement.departmentId = data[i].id;
+        reportElement.departmentName = data[i].name;
+        reportElement.numberOfAgents = data[i].User.length;
+        reportElement.numberOfTickets = data[i].Ticket.length;
+        const lowTickets = data[i].Ticket.filter((ticket) => ticket.priority === 'LOW');
+        const mediumTickets = data[i].Ticket.filter((ticket) => ticket.priority === 'MEDIUM');
+        const highTickets = data[i].Ticket.filter((ticket) => ticket.priority === 'HIGH');
+        const urgentTickets = data[i].Ticket.filter((ticket) => ticket.priority === 'URGENT');
+        reportElement.numberOfLowPriorityTickets = lowTickets.length;
+        reportElement.numberOfMediumPriorityTickets = mediumTickets.length;
+        reportElement.numberOfHighPriorityTickets = highTickets.length;
+        reportElement.numberOfUrgentPriorityTickets = urgentTickets.length;
+        ticketsAssignedToDepartment += reportElement.numberOfTickets;
+        report.push(reportElement);
+    }
+    const tickets = await getAllTickets({role: 'ADMIN'});
+    let reportElement: any = {};
+    reportElement.departmentName = 'OTHERS';
+    reportElement.numberOfTickets = tickets.length - ticketsAssignedToDepartment;
+    report.push(reportElement);
+    return report;
+}
+
 export {
     createNewDepartment,
     getAllDepartments,
@@ -121,5 +165,6 @@ export {
     updateDepartmentById,
     deleteDepartmentById,
     getAllDepartmentsNames,
-    getAllUsersInDepartment
+    getAllUsersInDepartment,
+    getDepartmentsAnalytics
 }

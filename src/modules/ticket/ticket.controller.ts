@@ -12,7 +12,7 @@ import { cacheTicketById, cacheTickets } from '../../services/cache.service';
 import { addAIJob, addEmailJob } from '../../services/queue.service';
 import { getUserById } from '../user/user.service';
 import { getAssignPrompt, getCategoryPrompt, getPriorityPrompt } from '../../utils/prompts';
-import { getAllDepartmentsNames } from '../department/department.service';
+import { getAllDepartmentsNames, getDepartmentsAnalytics } from '../department/department.service';
 
 
 
@@ -151,7 +151,14 @@ const assignTicket = asyncWrapper(
 
 const getAnalytics = asyncWrapper(
     async (req: Request, res: Response) => {
-
+        const report = await getDepartmentsAnalytics();
+        res.json({
+            success: true,
+            data: {
+                report
+            },
+            message: "Report created successfully"
+        });
     })
 
 export {

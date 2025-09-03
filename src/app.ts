@@ -7,7 +7,8 @@ import { router as userRouter } from './modules/user/user.routes';
 import {router as ticketRouter } from './modules/ticket/ticket.routes';
 import {router as departmentRouter } from './modules/department/department.routes';
 import { CustomError } from "./utils/CustomError";
-
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger.json');
 
 const app: Application = express();
 dotenv.config();
@@ -19,6 +20,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/tickets', ticketRouter);
 app.use('/api/departments', departmentRouter);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/', () => {
     throw new CustomError(404, 'resource not found');
 });
