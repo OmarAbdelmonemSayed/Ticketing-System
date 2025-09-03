@@ -1,11 +1,10 @@
 import { CustomError } from "./../../utils/CustomError";
 import { PrismaClient } from "@prisma/client";
 import { CreateAttachmentType } from "../attachment/dto/createAttachment.dto";
-import { UpdateAttachmentType } from "./dto/updateAttachment.dto";
 
 const prisma = new PrismaClient();
 
-const createNewAttachment = async (user: any, id: any, data: CreateAttachmentType) => {
+const createNewAttachment = async (user: any, id: any, data: CreateAttachmentType, fileUrl: any) => {
     const comment = await prisma.comment.findFirst({
         where: {
             id: data.commentId
@@ -19,6 +18,7 @@ const createNewAttachment = async (user: any, id: any, data: CreateAttachmentTyp
     }
     const attachment = await prisma.attachment.create({
         data: {
+            fileUrl,
             ...data,
             userId: user.id,
         }
@@ -81,7 +81,7 @@ const getAllAttachments = async (user: any, id: any) => {
     return attachments;
 }
 
-const updateAttachmentById = async (user: any, attachmentId: any, data: UpdateAttachmentType) => {
+const updateAttachmentById = async (user: any, attachmentId: any, data: any) => {
     let attachment = await prisma.attachment.findFirst({
         where: {
             id: attachmentId
@@ -99,8 +99,11 @@ const updateAttachmentById = async (user: any, attachmentId: any, data: UpdateAt
         where: {
             id: attachmentId,
         },
-        data
+        data: {
+            fileUrl: data
+        }
     });
+    return attachment;
 }
 
 

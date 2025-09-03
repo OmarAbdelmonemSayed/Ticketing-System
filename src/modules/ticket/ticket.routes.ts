@@ -5,6 +5,7 @@ import { createComment, deleteComment, getComments, updateComment } from "./../c
 import { createAttachment, deleteAttachment, getAttachments, updateAttachment } from "./../attachment/attachment.controller";
 import { createNote, deleteNote, getNotes, updateNote } from "./../note/note.controller";
 import { cachedTickets, invalidateTicketsOnAssignAgentToTicket, invalidateTicketsOnCreateTicket, invalidateTicketsOnChangeTicket, cachedTicketById, invalidateTicketByIdOnChange } from "../../middlewares/cache.middleware";
+import { upload } from "../../services/file.service";
 
 const router = express.Router();
 
@@ -37,7 +38,7 @@ router.route('/:id/comments')
 
 
 router.route('/:id/attachments')
-    .post(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, createAttachment)  
+    .post(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, upload.single('fileUrl'), createAttachment)  
     .get(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), getAttachments);  
 
 
@@ -64,7 +65,7 @@ router.route('/:id/comments/:commentId')
 
 
 router.route('/:id/attachments/:attachmentId')
-    .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, updateAttachment)
+    .patch(isAuthenticated, hasPermission('CUSTOMER', 'AGENT', 'ADMIN'), invalidateTicketByIdOnChange, upload.single('fileUrl'), updateAttachment)
     .delete(isAuthenticated, hasPermission('AGENT', 'ADMIN'), invalidateTicketByIdOnChange, deleteAttachment);  
 
 
