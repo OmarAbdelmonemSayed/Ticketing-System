@@ -7,11 +7,13 @@ import { router as userRouter } from './modules/user/user.routes';
 import {router as ticketRouter } from './modules/ticket/ticket.routes';
 import {router as departmentRouter } from './modules/department/department.routes';
 import { CustomError } from "./utils/CustomError";
+import { archiveTicketsJob } from "./services/scheduler.service";
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
 
 const app: Application = express();
 dotenv.config();
+archiveTicketsJob();
 
 app.use(cors());
 app.use(express.json());

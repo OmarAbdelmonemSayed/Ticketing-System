@@ -23,6 +23,14 @@ const createNewAttachment = async (user: any, id: any, data: CreateAttachmentTyp
             userId: user.id,
         }
     });
+    await prisma.ticket.update({
+        where: {
+            id: comment.ticketId
+        },
+        data: {
+            updatedAt: new Date()
+        }
+    });
     return attachment;
 }
 
@@ -101,6 +109,19 @@ const updateAttachmentById = async (user: any, attachmentId: any, data: any) => 
         },
         data: {
             fileUrl: data
+        }
+    });
+    const comment = await prisma.comment.findFirst({
+        where: {
+            id: attachment.commentId
+        }
+    });
+    await prisma.ticket.update({
+        where: {
+            id: comment?.ticketId
+        },
+        data: {
+            updatedAt: new Date()
         }
     });
     return attachment;

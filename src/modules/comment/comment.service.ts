@@ -25,6 +25,14 @@ const createNewComment = async (user: any, id: any, data: CreateCommentType) => 
                             userId: user.id
                         }
                     });
+            await prisma.ticket.update({
+                where: {
+                    id
+                },
+                data: {
+                    updatedAt: new Date()
+                }
+            });
         } else {
             throw new CustomError(401, 'Ticket is not available for this user');
         }
@@ -34,6 +42,14 @@ const createNewComment = async (user: any, id: any, data: CreateCommentType) => 
                 ...data,
                 ticketId: id,
                 userId: user.id
+            }
+        });
+        await prisma.ticket.update({
+            where: {
+                id
+            },
+            data: {
+                updatedAt: new Date()
             }
         });
     }
@@ -146,6 +162,14 @@ const updateCommentById = async (user: any, commentId: any, data: UpdateCommentT
             id: commentId
         },
         data
+    });
+    await prisma.ticket.update({
+        where: {
+            id: comment.ticketId
+        },
+        data: {
+            updatedAt: new Date()
+        }
     });
     return comment;
 }

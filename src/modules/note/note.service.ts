@@ -24,6 +24,14 @@ const createNewNote = async (user: any, id: any, data: CreateNoteType) => {
                             userId: user.id
                         }
                     });
+            await prisma.ticket.update({
+                where: {
+                    id
+                },
+                data: {
+                    updatedAt: new Date()
+                }
+            });
         } else {
             throw new CustomError(401, 'Ticket is not available for this user');
         }
@@ -33,6 +41,14 @@ const createNewNote = async (user: any, id: any, data: CreateNoteType) => {
                 ...data,
                 ticketId: id,
                 userId: user.id
+            }
+        });
+        await prisma.ticket.update({
+            where: {
+                id
+            },
+            data: {
+                updatedAt: new Date()
             }
         });
     }
@@ -111,6 +127,14 @@ const updateNoteById = async (user: any, noteId: any, data: any) => {
             id: noteId
         },
         data
+    });
+    await prisma.ticket.update({
+        where: {
+            id: note.ticketId
+        },
+        data: {
+            updatedAt: new Date()
+        }
     });
     return note;
 }

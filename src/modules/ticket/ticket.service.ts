@@ -261,6 +261,42 @@ const assignTicketToAgent = async (agentId: any, id: any) => {
     return ticket;
 }
 
+const archiveClosedAndInactiveTickets = async() => {
+    const INACTIVE_TIME = 2592000000; // 30 days
+    const tickets = await prisma.ticket.findMany({
+        where: {
+            OR: [
+                {status: 'CLOSED'},
+                {updatedAt: {
+                    lt: new Date(Date.now() - INACTIVE_TIME)
+                }}
+            ]
+        }
+    });
+    await prisma.ticket.deleteMany({
+        where: {
+            OR: [
+                {status: 'CLOSED'},
+                {updatedAt: {
+                    lt: new Date(Date.now() - INACTIVE_TIME)
+                }}
+            ]
+        }
+    });
+    const ticketsArchive = tickets.map((ticket) => {
+        return { id: ticket.id, 
+            title: ticket.title, 
+            description: ticket.description, 
+            status: ticket.status, 
+            priority: ticket.priority, 
+            category: ticket.category, 
+            createdAt: ticket.createdAt, 
+            updatedAt: ticket.updatedAt }
+    });
+    await prisma.ticket_Archive.createMany({
+        data: ticketsArchive
+    })
+}
 
 export {
     createNewTicket,
@@ -270,5 +306,6 @@ export {
     deleteTicketById,
     updateStatusById,
     assignTicketToAgent,
-    getAllFilteredTickets
+    getAllFilteredTickets,
+    archiveClosedAndInactiveTickets
 }
